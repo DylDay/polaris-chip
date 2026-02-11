@@ -18,28 +18,39 @@ export class MyCard extends LitElement {
     this.image = "https://example.com/image.png";
     this.description = "This is my custom card component.";
     this.link = "https://www.example.com";
+    this.detailsLabel = "Details";
+    this.fancy = false;
   }
 
   static get styles() {
     return css`
       :host {
-        display: inline-flex;
+        display: inline-block;
+      }
+
+      :host([fancy]) .card {
+        background-color: #9CD1DB;
+        border: 2px solid violet;
+        box-shadow: 0px 0px 6px 0px  #4A90E2;
       }
 
       .card {
         text-align: center;
         background-color: #CFB93C;
         width: 400px;
+        height: 350px;
         border:2px solid black;
-        border-radius: 48px;
+        border-radius: 24px;
         box-shadow: 0px 0px 8px 0px;
         margin: 16px 8px;
+        overflow: auto;
       }
       
       .card-image {
         width: 150px;
         padding-top: 20px;
         border-radius: 50px;
+        aspect-ratio: 1 / 1;
       }
 
       .card-title {
@@ -47,9 +58,12 @@ export class MyCard extends LitElement {
         font-weight: bold;
         color: var(--my-card-title-text-color, black);
         background-color: var(--my-card-title-background-color, pink);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
-      .details {
+      .details-button {
         display: block;
         margin: 8px 142px;
         padding: 8px 32px;
@@ -57,8 +71,22 @@ export class MyCard extends LitElement {
 
       }
 
-      .card.fancy {
-        background-color: #9CD1DB;
+      details summary {
+        text-align: left;
+        font-size: 20px;
+        padding: 8px 0;
+      }
+
+      details[open] summary {
+        font-weight: bold;
+      }
+      
+      details div {
+        border: 2px solid black;
+        text-align: left;
+        padding: 8px;
+        height: 70px;
+        overflow: auto;
       }
 
       button:focus-within,
@@ -69,23 +97,40 @@ export class MyCard extends LitElement {
     `;
   }
 
+  openChanged(e) {
+    console.log(e);
+    if (e.target.getAttribute('open') !== null) {
+      this.fancy = true;
+    }
+    else {
+      this.fancy = false;
+    }
+  }
+
   render() {
     return html`<div class="card">
-      <img class="card-image" src="${this.image}">
+      <img class="card-image" src="${this.image}" alt="${this.title}">
       <div class="card-title">${this.title}</div>
-      <p class="description"><slot></slot></p>
+      <details ?open="${this.fancy}" @toggle="${this.openChanged}">
+        <summary>Description</summary>
+        <div>
+          <slot>${this.description}</slot>
+        </div>
+      </details>
       <a href="${this.link}">
-        <button class="details">Details</button>
+        <button class="details-button" alt="${this.detailsLabel}">${this.detailsLabel}</button>
       </a>
       </div>`;
   }
 
   static get properties() {
     return {
-      title: { type: String },
+      title: { type: String, reflect: true },
       image: { type: String },
       description: { type: String },
       link: { type: String },
+      detailsLabel: { type: String },
+      fancy: { type: Boolean, reflect: true }
     };
   }
 }
