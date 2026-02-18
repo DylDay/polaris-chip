@@ -47,11 +47,11 @@ export class MyCard extends LitElement {
         overflow: auto;
       }
       
-      .card-image {
+      .card meme-maker {
         width: 150px;
         padding-top: 20px;
         border-radius: 50px;
-        aspect-ratio: 1 / 1;
+        aspect-ratio: 1/1;
       }
 
       .card-title {
